@@ -531,8 +531,6 @@ class AndroidConfig(_BaseConfig):
     def api_level(self) -> int:
         if self.override_api_level:
             return self.override_api_level
-        if self.target_arch == hosts.Arch.RISCV64:
-            return 10000
         if self.static or self.platform:
             # Set API level for platform to to 29 since these runtimes can be
             # used for apexes targeting that API level.
