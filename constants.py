@@ -24,7 +24,7 @@ MAC_MIN_VERSION: str = '10.14'
 CLANG_PREBUILT_VERSION: str = 'clang-r468909b'
 
 # This is the ndk version used to build runtimes.
-NDK_VERSION: str = 'r25'
+NDK_VERSION: str = 'r23'
 
 # Targets for host.
 HOST_TARGETS: Set[str] = set(['X86', 'AArch64'])

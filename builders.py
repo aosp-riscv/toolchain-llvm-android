@@ -938,19 +938,14 @@ class DeviceSysrootsBuilder(base_builders.Builder):
 
         # Copy the NDK prebuilt's sysroot, but for the platform variant, omit
         # the STL and android_support headers and libraries.
-        if arch == hosts.Arch.RISCV64:
-            src_sysroot = paths.RISCV64_ANDROID_SYSROOT
-        else:
-            src_sysroot = paths.NDK_BASE / 'toolchains' / 'llvm' / 'prebuilt' / 'linux-x86_64' / 'sysroot'
+        src_sysroot = paths.NDK_BASE / 'toolchains' / 'llvm' / 'prebuilt' / 'linux-x86_64' / 'sysroot'
 
         # Copy over usr/include.
         shutil.copytree(src_sysroot / 'usr' / 'include',
                         sysroot / 'usr' / 'include', symlinks=True)
 
         if platform:
-            if arch != hosts.Arch.RISCV64:
-                # Remove the STL headers.
-                shutil.rmtree(sysroot / 'usr' / 'include' / 'c++')
+            shutil.rmtree(sysroot / 'usr' / 'include' / 'c++')
         else:
             # Add the android_support headers from usr/local/include.
             shutil.copytree(src_sysroot / 'usr' / 'local' / 'include',
@@ -965,7 +960,7 @@ class DeviceSysrootsBuilder(base_builders.Builder):
         # the NDK libc++, except for the riscv64 sysroot which doesn't have
         # these files.
         (dest_lib / 'libcompiler_rt-extras.a').unlink()
-        if platform and arch != hosts.Arch.RISCV64:
+        if platform:
             (dest_lib / 'libc++abi.a').unlink()
             (dest_lib / 'libc++_static.a').unlink()
             (dest_lib / 'libc++_shared.so').unlink()
@@ -975,7 +970,8 @@ class DeviceSysrootsBuilder(base_builders.Builder):
                 continue
             if not re.match(r'\d+$', subdir.name):
                 continue
-            if platform and arch != hosts.Arch.RISCV64:
+            (subdir / 'libcompiler_rt-extras.a').unlink()
+            if platform:
                 (subdir / 'libc++.a').unlink()
                 (subdir / 'libc++.so').unlink()
         # Verify that there aren't any extra copies somewhere else in the
